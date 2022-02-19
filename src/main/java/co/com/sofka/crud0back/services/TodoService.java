@@ -23,23 +23,23 @@ public class TodoService {
 
 
   /*=========== FIND ===========*/
-  /** Finds all TODOs or finds all TODOs by name or isCompleted */
-  public List<TodoModel> findTodos(String name, Boolean isCompleted){
+  /** Finds all TODOs or finds all TODOs by name or completed */
+  public List<TodoModel> findTodos(String name, Boolean completed){
 
     // Find without filters, both null
-    if(name == null && isCompleted == null)
+    if(name == null && completed == null)
       return (List<TodoModel>) todoRepository.findAll();
     
     // Find if only name is not null
-    if(name != null && isCompleted == null)
+    if(name != null && completed == null)
       return todoRepository.findByNameContaining(name);
 
-    // Find if only isCompleted is not null
-    if(name == null && isCompleted != null)
-      return todoRepository.findByCompleted(isCompleted);
+    // Find if only completed is not null
+    if(name == null && completed != null)
+      return todoRepository.findByCompleted(completed);
 
     // Find using both filters
-    return todoRepository.findByNameContainingAndCompleted(name, isCompleted);
+    return todoRepository.findByNameContainingAndCompleted(name, completed);
   }
 
   /** Get TODO by id */
@@ -49,6 +49,7 @@ public class TodoService {
 
 
   /*=========== FIND & EDIT ===========*/
+  /** Edit TODO by id, using new Model */
   public TodoModel editTodo(Long id, TodoModel todo){
     TodoModel _todo = this.getTodo(id).orElseThrow();
       
@@ -60,8 +61,19 @@ public class TodoService {
 
 
   /*=========== DELETE ===========*/
-  public void delete(Long id){
+  /** Deletes TODO by id */
+  public void deleteTodo(Long id){
     todoRepository.delete(this.getTodo(id).get());
+  }
+
+  /** Deletes all TODOs or those that are completed */
+  public void deleteTodos(Boolean completed){ 
+    // Find without filters, both null
+    if(completed == null)
+      todoRepository.deleteAll();
+
+    // Find using both filters
+    todoRepository.deleteByCompleted(completed);
   }
   
 }
