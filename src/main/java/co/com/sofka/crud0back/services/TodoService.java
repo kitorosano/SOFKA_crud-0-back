@@ -1,5 +1,7 @@
 package co.com.sofka.crud0back.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +20,11 @@ public class TodoService {
   }
 
   /*=========== FIND ===========*/
-  public Iterable<TodoModel> list(){
-    return todoRepository.findAll();
+  public List<TodoModel> findTodos(String name){
+    if(name == null) return (List<TodoModel>) todoRepository.findAll();
+    return todoRepository.findByNameContaining(name);
   }
+
 
   public TodoModel get(Long id){
     return todoRepository.findById(id).orElseThrow();
