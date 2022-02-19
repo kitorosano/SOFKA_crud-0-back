@@ -2,6 +2,7 @@ package co.com.sofka.crud0back.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.websocket.server.PathParam;
 
@@ -66,9 +67,20 @@ public class TodoController {
     }
   }
 
-  @GetMapping(value = "/todos", params = "id")
-  public TodoModel get(@PathParam("id") Long id){
-    return todoService.get(id);
+   /**
+   * Metodo para obtener un objeto TODO mediante su id
+   * @param id
+   * @return Un response exitoroso con el TODO, o un response vacio.
+   */
+  @GetMapping("/todos/{id}")
+  public ResponseEntity<TodoModel> readTodo(@PathVariable(value = "id") Long id) {
+    Optional<TodoModel> todo = todoService.getTodo(id);
+    
+    if (todo.isPresent()) {
+      return new ResponseEntity<>(todo.get(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
 
   /*=========== UPDATE ===========*/
