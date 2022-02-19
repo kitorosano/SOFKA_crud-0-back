@@ -48,14 +48,15 @@ public class TodoController {
 
   /*=========== READ ===========*/
   /**
-   * Metodo para obtener todos los objetos TODO. Se puede utilizar el parametro name opcionalmente para filtrar por nombre
+   * Metodo para obtener todos los objetos TODO. Se puede utilizar el parametro name o completed opcionalmente para filtrar por nombre o estado
    * @param name
-   * @return Un response exitoroso con la lista de los TODOs o aquellos filtrados por nombre, o un response vacio. 
+   * @param completed
+   * @return Un response exitoroso con la lista de los TODOs o aquellos filtrados por nombre o estado, o un response vacio. 
    */
-  @GetMapping("/todos")
-  public ResponseEntity<List<TodoModel>> readTodos(@RequestParam(required = false) String name){
+  @GetMapping(value = "/todos")
+  public ResponseEntity<List<TodoModel>> readTodos(@RequestParam(required = false) String name, @RequestParam(required = false) Boolean completed){
     try {
-      List<TodoModel> todos = todoService.findTodos(name);
+      List<TodoModel> todos = todoService.findTodos(name, completed);
       
       if(todos.isEmpty()){
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -84,13 +85,23 @@ public class TodoController {
   }
 
   /*=========== UPDATE ===========*/
-  @PutMapping(value = "/todos")
-   public TodoModel update(@RequestBody TodoModel todo){
-     if(todo.getId() != null)
-      return todoService.saveTodo(todo);
-
-      throw new RuntimeException("No existe el id para actualizar");
+  /**
+   * Metodo para modificar un objeto TODO mediante su id
+   * @param id
+   * @param tutorial
+   * @return Un response exitoso con el TODO modificado, o un response vacio
+   */
+  @PutMapping("/todos/{id}")
+  public ResponseEntity<TodoModel> updateTodo(@PathVariable(value = "id") Long id, @RequestBody TodoModel todo){
+    try {
+      TodoModel todoData = todoService.editTodo(id, todo);
+      
+      return new ResponseEntity<>(todoData, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
+  
 
   /*=========== DELETE ===========*/
   @DeleteMapping(value = "/todos")

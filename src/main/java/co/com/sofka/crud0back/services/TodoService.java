@@ -16,20 +16,46 @@ public class TodoService {
   private ITodoRepository todoRepository;
 
   /*=========== SAVE ===========*/
+  /** Saves a new register of TODO */
   public TodoModel saveTodo(TodoModel todo){
     return todoRepository.save(new TodoModel(todo.getName(), false));
   }
 
+
   /*=========== FIND ===========*/
-  /** Find all TODOs. Find all TODOs by name */
-  public List<TodoModel> findTodos(String name){
-    if(name == null) return (List<TodoModel>) todoRepository.findAll();
-    return todoRepository.findByNameContaining(name);
+  /** Finds all TODOs or finds all TODOs by name or isCompleted */
+  public List<TodoModel> findTodos(String name, Boolean isCompleted){
+
+    // Find without filters, both null
+    if(name == null && isCompleted == null)
+      return (List<TodoModel>) todoRepository.findAll();
+    
+    // Find if only name is not null
+    if(name != null && isCompleted == null)
+      return todoRepository.findByNameContaining(name);
+
+    // Find if only isCompleted is not null
+    if(name == null && isCompleted != null)
+      return todoRepository.findByCompleted(isCompleted);
+
+    // Find using both filters
+    return todoRepository.findByNameContainingAndCompleted(name, isCompleted);
   }
 
   /** Get TODO by id */
   public Optional<TodoModel> getTodo(Long id){
     return todoRepository.findById(id);
+  }
+
+
+  /*=========== FIND & EDIT ===========*/
+  public TodoModel editTodo(Long id, TodoModel todo){
+    TodoModel _todo = this.getTodo(id).orElseThrow();
+      
+    _todo.setName(todo.getName());
+    _todo.setCompleted(todo.isCompleted());
+
+    return todoRepository.save(_todo);
   }
 
 

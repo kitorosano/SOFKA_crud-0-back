@@ -18,13 +18,13 @@ public class TodoModel {
   private String name;
   
   @Column(name = "completed", nullable = false)
-  private boolean completed;
+  private Boolean completed;
 
 
   public TodoModel() {
   }
 
-  public TodoModel(String name, boolean completed) {
+  public TodoModel(String name, Boolean completed) {
     this.name = name;
     this.completed = completed;
   }
@@ -45,11 +45,15 @@ public class TodoModel {
     this.name = name;
   }
 
-  public boolean isCompleted() {
+  public Boolean isCompleted() {
     return this.completed;
   }
 
-  public void setCompleted(boolean completed) {
+  public Boolean getCompleted() {
+    return this.completed;
+  }
+
+  public void setCompleted(Boolean completed) {
     this.completed = completed;
   }
 
